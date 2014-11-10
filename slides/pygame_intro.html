@@ -42,7 +42,7 @@
 class: center, middle
 <markdown>
 
-# Pygame
+# Pygame Intro
 ## Making games in python
 ---
 
@@ -75,7 +75,7 @@ Don't worry there's `pygame`. A good python wrapper around SDL so you don't have
 
 --
 
-We're going to cover the following thingsin this lesson
+We're going to cover the following things in this lesson
 
 --
 
@@ -92,6 +92,188 @@ We're going to cover the following thingsin this lesson
 --
 
 * General Game Structure
+
+---
+
+## Window Creation
+
+--
+
+```python
+#!/usr/bin/python
+
+import pygame
+
+pygame.init()
+width = 600
+height = 300
+screen = pygame.display.set_mode([width, height])
+while True:
+    # It's okay if you don't know what this does I'll get to 
+    # this call. But it's important to have at the end of 
+    # your render loop
+    screen.flip()
+    continue
+```
+
+--
+
+`screen` here is an SDL surface. Pretty much everything you draw is a surface  
+
+--
+
+surfaces are associated with a specific pixel map / image
+
+???
+
+Here we just have the height and width passed in  
+There are various flags you can use like HWSURFACE and the double buffer flag  
+This is just draw a window but there's nothing in it yet
+
+--
+
+That's it. Now you have a window!
+
+---
+
+# Drawing things
+
+--
+
+This is only slightly more complicated
+
+--
+
+```python
+#!/usr/bin/python
+
+import pygame
+
+pygame.init()
+
+height = 300
+width = 600
+screen = pygame.display.set_mode([width, height])
+# The convert call is not strictly necessary
+ball = pygame.image.load("../resources/ball.png").convert_alpha()
+
+# Surfaces are "blit" or "drawn" to other 
+# surfaces in this case the screen
+screen.blit(ball, (0, 0))
+while True:
+    pygame.display.flip()
+```
+
+???
+
+Everything is pretty much the same  
+the ball is loaded from a resource file in a sibling directory  
+the convert alpha call is important mostly for speed  
+get into the habit of using convert if you want things to move quickly  
+there are various blending modes for surfaces but I'm not going to get into those
+
+An "object" on the screen is really a combination of a rect/location on the source and an image
+
+questions?
+
+---
+
+# Screen Rendering / Double Buffering
+
+--
+
+The screen doesn't clear automatically  
+--
+
+We have a couple of options:  
+--
+    1. Overwrite everyting on the screen with a background color each frame  
+--
+    2. Make sure you redraw the seconds of the screen that move/change  
+--
+
+Number 2 would involve a lot of specialized optomization and we don't need to
+bother with that right now
+
+--
+
+Now we have a new problem:    
+Clearing the screen can create flickers
+
+---
+
+# Problem (the flicker)
+## Immediate Mode
+
+--
+
+When you draw something to the screen it gets put there right away
+
+???
+
+For a split second just the objects that have been drawn are on the screen
+The entire screen is updated on every draw  
+You clear the screen, you'll see it for a few milliseconds  
+You draw a ball you'll see the ball on the black screen for a few milliseconds  
+You draw a cat you'll see the ball and the cat on the black screen for a few milliseconds... etc.  
+
+--
+
+This is fast but causes the flicker when things disappear
+
+--
+
+What is the solution for this?
+
+---
+
+# Fix (Buffering to the rescue)
+
+--
+
+Don't draw directly to the screen
+
+--
+
+Draw to a buffer that get displayed at once
+
+--
+
+No flickering because the screen is only cleared by overwritting it with
+a completed image
+
+--
+
+This optimization is so simple it's enabled by default so, no work for you!
+
+---
+
+# Game Structure
+
+--
+
+Initialization
+
+--
+
+Game Loop
+
+--
+
+    1. State(managed by FSM, possibly multiple levels)
+    2. Game Logic
+    3. Rendering
+
+--
+
+Cleanup
+
+
+???
+
+Show breakout demo
+
+---
 
 </markdown>
         </textarea>
