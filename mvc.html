@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Title</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <style type="text/css">
+        @import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+        @import url(http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+
+        body { font-family: 'Droid Serif'; }
+        h1, h2, h3 {
+            font-family: 'Yanone Kaffeesatz';
+            font-weight: normal;
+        }
+        .remark-code {
+            overflow: auto;
+            max-height: 550px;
+            width: 100%;
+            position: relative;
+        }
+        </style>
+    </head>
+    <body>
+        <textarea id="source">
+
+class: center, middle
+<markdown>
+
+# Model View Controller Design
+#### Why program output can look boring but really isn't
+---
+
+# Problem (Todo list)
+
+You've created a todo-list program which gives the user a way to view and
+modify a todo list.
+
+---
+
+# Problem (Todo list)
+
+You've created a todo-list program which gives the user a way to view and
+modify a todo list.
+
+
+Now you want that same list to be viewable and changable over the internet
+
+---
+
+# Problem (Todo list)
+
+You've created a todo-list program which gives the user a way to view and
+modify a todo list.
+
+
+Now you want that same list to be viewable and changable over the internet
+Now you want to be able to have anyone tweet at your list to add items
+
+---
+
+# Problem (Todo list)
+
+You've created a todo-list program which gives the user a way to view and
+modify a todo list.
+
+
+Now you want that same list to be viewable and changable over the internet
+Now you want to be able to have anyone tweet at your list to add items
+
+Maybe it will be easy...
+
+---
+
+# Problem (Todo list)
+
+You've created a todo-list program which gives the user a way to view and
+modify a todo list.
+
+
+Now you want that same list to be viewable and changable over the internet
+
+Maybe it will be easy...
+
+Maybe it won't be
+
+---
+
+# Intro
+
+In programming you often have three different things you're concerned with:
+
+---
+
+# Intro
+
+In programming you often have three different things you're concerned with:
+* Model
+
+---
+
+# Intro
+
+In programming you often have three different things you're concerned with:
+* Model (the list)
+
+---
+
+# Intro
+
+In programming you often have three different things you're concerned with:
+* Model (the list)
+* View (desktop)
+
+---
+
+# Intro
+
+In programming you often have three different things you're concerned with:
+* Model (the list)
+* View (desktop, web)
+
+---
+
+# Intro
+
+In programming you often have three different things you're concerned with:
+* Model (the list)
+* View (desktop, web)
+* Controller (desktop, web, twitter)
+
+---
+
+# Intro
+
+In programming you often have three different things you're concerned with:
+* Model (the list)
+* View (desktop, web)
+* Controller (desktop, web, twitter)
+
+There is often one model and there is often more than one viewer and controller
+
+---
+
+# Chess Example (model study)
+This is a view of a game of chess:
+```python
+    board = [['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
+             ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
+             ['',  '',  '',  '',  '',  '',  '',  ''],
+             ['',  '',  '',  '',  '',  '',  '',  ''],
+             ['',  '',  '',  '',  '',  '',  '',  ''],
+             ['',  '',  '',  '',  '',  '',  '',  ''],
+             ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+             ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']]
+```
+
+---
+
+# Chess Example (model study)
+This is a view of a game of chess:
+```python
+    board = [['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
+             ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
+             ['',  '',  '',  '',  '',  '',  '',  ''],
+             ['',  '',  '',  '',  '',  '',  '',  ''],
+             ['',  '',  '',  '',  '',  '',  '',  ''],
+             ['',  '',  '',  '',  '',  '',  '',  ''],
+             ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+             ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']]
+```
+
+This is also a game of chess (this one is pretty):
+
+![Chess](http://www.chessvariants.org/d.chess/startup.gif)
+
+---
+
+# Why stuff can look boring
+
+Humans are good with images
+
+Computers are bad with images...
+
+---
+
+# Why stuff can look boring
+
+Humans are good with images
+
+Computers are bad with images... good with symbols
+
+---
+
+# Why stuff can look boring
+
+Humans are good with images
+
+Computers are bad with images... good with symbols
+
+So which one of these is easier to write a program around?
+
+---
+
+# Why stuff can look boring
+
+Humans are good with images
+
+Computers are bad with images... good with symbols
+
+So which one of these is easier to write a program around?
+
+```python
+    board = [['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
+             ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
+             ['',  '',  '',  '',  '',  '',  '',  ''],
+             ['',  '',  '',  '',  '',  '',  '',  ''],
+             ['',  '',  '',  '',  '',  '',  '',  ''],
+             ['',  '',  '',  '',  '',  '',  '',  ''],
+             ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+             ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']]
+```
+
+Chess Example
+
+---
+
+# Why stuff can look boring
+
+When manipulating images in a computer it's sort of like dealing with this
+http://cdn.instructables.com/FPI/EUBU/FD80BVW8/FPIEUBUFD80BVW8.LARGE.jpg
+http://picascii.com
+
+---
+
+<img style="top: -100px; position: relative; height: 750px;" src="http://www.hamienet.com/Beethoven-Day-sheet-music-page_25813-5-1.png">
+</img>
+
+---
+
+# View
+
+---
+
+# View
+
+Images are great *views* for humans but bad models for computers
+
+---
+
+# View
+
+Images are great *views* for humans but bad models for computers
+
+There are so many ways to view the same data that it's very likely
+you'll want more than one view
+
+---
+
+# View
+
+Images are great *views* for humans but bad models for computers
+
+There are so many ways to view the same data that it's very likely
+you'll want more than one view
+
+Chess Example
+
+---
+
+# View
+
+```python
+---------
+rnbqkbnr|
+pppppppp|
+        |
+        |
+        |
+        |
+PPPPPPPP|
+RNBQKBNR|
+---------
+```
+
+---
+
+![Chess](http://i.imgur.com/ZL3mvh2.png)
+
+---
+
+```html
+<html><head><link rel="stylesheet" type="text/css" href="chess.css"></head>
+<body>
+<div class="square r light black"></div><div class="square n dark black"></div>
+<div class="square b light black"></div><div class="square q dark black"></div>
+<div class="square k light black"></div><div class="square b dark black"></div>
+<div class="square n light black"></div><div class="square r dark black"></div>
+<br/>
+<div class="square p dark black"></div><div class="square p light black"></div>
+<div class="square p dark black"></div><div class="square p light black"></div>
+<div class="square p dark black"></div><div class="square p light black"></div>
+<div class="square p dark black"></div><div class="square p light black"></div>
+<br/>
+<div class="square light"></div><div class="square dark"></div>
+<div class="square light"></div><div class="square dark"></div>
+<div class="square light"></div><div class="square dark"></div>
+<div class="square light"></div><div class="square dark"></div><br/>
+<div class="square dark"></div><div class="square light"></div>
+<div class="square dark"></div><div class="square light"></div>
+<div class="square dark"></div><div class="square light">
+</div><div class="square dark"></div><div class="square light"></div><br/>
+<div class="square light"></div><div class="square dark">
+</div><div class="square light"></div><div class="square dark"></div>
+<div class="square light"></div><div class="square dark"></div>
+<div class="square light"></div><div class="square dark"></div><br/>
+<div class="square dark"></div><div class="square light"></div>
+<div class="square dark"></div><div class="square light"></div>
+<div class="square dark"></div><div class="square light"></div>
+<div class="square dark"></div><div class="square light"></div><br/>
+<div class="square P light white"></div><div class="square P dark white"></div>
+<div class="square P light white"></div><div class="square P dark white"></div>
+<div class="square P light white"></div><div class="square P dark white"></div>
+<div class="square P light white"></div><div class="square P dark white"></div>
+<br/>
+<div class="square R dark white"></div><div class="square N light white"></div>
+<div class="square B dark white"></div><div class="square Q light white"></div>
+<div class="square K dark white"></div><div class="square B light white"></div>
+<div class="square N dark white"></div><div class="square R light white"></div>
+<br/>
+</body></html>
+```
+
+http://bit.ly/1uVYGMgV
+
+
+---
+
+# View
+
+A view is really just a translation of a model to some other read-only form
+
+---
+
+# View
+
+A view is really just a translation of a model to some other read-only form
+
+Ready-only because we only want to keep track of 1 model
+
+---
+
+</markdown>
+        </textarea>
+        <script src="http://gnab.github.io/remark/downloads/remark-latest.min.js" type="text/javascript">
+        </script>
+        <script type="text/javascript">
+            var slideshow = remark.create();
+        </script>
+    </body>
+</html>
+

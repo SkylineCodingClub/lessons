@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Title</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <style type="text/css">
+        @import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+        @import url(http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+
+        body { font-family: 'Droid Serif'; }
+        h1, h2, h3 {
+            font-family: 'Yanone Kaffeesatz';
+            font-weight: normal;
+        }
+        .remark-code {
+            overflow: auto;
+            max-height: 550px;
+            width: 100%;
+            position: relative;
+        }
+        .remark-inline-code {
+            background-color: rgba(51,51,51, 0.07);
+        }
+        .tool  img {
+            position: relative;
+            display: inline-block;
+            width: 10%;
+            height: 10%;
+        }
+        .maze img {
+            position: relative;
+            height: 70%;
+            width: 70%;
+            margin: auto auto;
+            left: 12%;
+        }
+        </style>
+    </head>
+    <body>
+        <textarea id="source">
+
+class: center, middle
+<markdown>
+
+# Objected Oriented Programming
+## Making the abstract more concrete
+---
+
+# Problem
+
+You want to create an image editing program that offers tools much like the one an artist has in real life.
+
+--
+
+This program will have tools
+
+--
+
+.tool[![Paintbrush](http://www.harborfreight.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/i/m/image_18039.jpg)]
+
+--
+.tool[![Eraser](http://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Pink-eraser.svg/570px-Pink-eraser.svg.png)]
+
+--
+.tool[![Eraser](http://i00.i.aliimg.com/img/pb/958/685/479/479685958_483.jpg)]
+
+--
+.tool[![Eraser](http://www.johnnyaustin.com/images/projects/Paint-Bucket.png)]
+
+--
+.tool[![Eraser](http://cdn.surefire.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/p/e/pen1-BK.png)]
+
+--
+...
+
+--
+
+How do you design and manage the abstractions in this image editing program in a way that will allow you to  
+
+--
+- Reason about the correctness of your program?
+
+--
+- Add new tools?
+---
+
+# Observations
+
+--
+
+All of the tools will *do* the same thing
+
+--
+
+You can "use" them on your image (a set of pixels) and they will alter that image and return a new set of pixels 
+
+--
+
+You will probably start using them in the same way (holding down the mouse button for example)
+
+---
+
+# Object Orientation
+
+--
+
+Our tool example is a perfect candidate for object origntation.
+
+--
+
+This is because we have an unkown number of things that have to perform a set number of functions
+
+--
+
+In this case we have *tools* that need to be *used*
+
+---
+
+# Aside: What is an "object" in programming?
+
+--
+
+**Def**: In the object-oriented programming paradigm, "object" refers to a particular instance of a class where the object can be a combination of variables, functions, and data structures.
+--
+
+## Functions
+
+--
+```cplusplus
+class Cat {
+    void meow() {
+        std::cout << "meow";
+    }
+}
+```
+```python
+class Cat:
+    def meow(self):
+        print "meow"
+```
+---
+# What is an "object" in programming? (cont.)
+## Variables
+--
+
+```cplusplus
+class Cat {
+    Cat(int catAge) {
+        this->age = catAge;
+    }
+    void meow() {
+        std::cout << "meow";
+    }
+    int age;
+}
+```
+```python
+class Cat:
+    def __init__(self, age):
+        self.age = age
+    def meow(self):
+        print "meow"
+```
+---
+# What is an "object" in programming? (cont.)
+## Data Structures
+--
+
+```cplusplus
+class Cat {
+    Cat(int catAge, Address catLocation) {
+        this->age = catAge;
+        this->location = catLocation;
+    }
+    void meow() {
+        std::cout << "meow";
+    }
+    int age;
+    Address location;
+}
+```
+```python
+class Cat:
+    def __init__(self, age, location):
+        self.age = age
+        self.location = location
+    def meow(self):
+        print "meow"
+```
+---
+# What is an "object" in programming? (cont.)
+
+## Example
+--
+
+```cplusplus
+#include <cat.h>
+#include <address.h>
+
+int main(int argc, char** argv[]) {
+    Address home(1234, "Nowhere Street", "Ann Arbor", "MI", 48105);
+    Cat fluffy(7, home);
+    fluffy.meow();
+
+    return 0;
+}
+```
+--
+
+Where does fluffy live?
+
+--
+
+How old is fluffy?
+
+--
+
+As you can see objects can make it easier to understand the programs that we write
+
+---
+## Object Orientation
+
+So how can we orient our program around such abstractions?
+
+--
+
+The real power in using objects is being able to have objects which conform to a specific interface
+
+--
+
+What if all you know is that an object is a ball?
+
+--
+
+Can you still list things you can do with that ball?
+
+--
+
+What if it's a billiard ball? Are there things specific to a billiard ball?
+
+---
+## Object Orientation
+
+A `billiard ball` is a *type of* `ball` and as such it conforms to certain normal `ball` uses
+
+--
+
+Here is an example of a `BilliardBall` class that builds off of a `Ball` class.
+
+--
+```python
+class BilliardBall(Ball):
+    def __init__(self, number):
+        self.number = number 
+```
+
+--
+
+Why is this useful?
+
+--
+
+As we talked about before all balls have *some* base set of properties. Those properties can be put in the "base class" or `Ball` class in this example.
+
+---
+
+## Object Orientation
+--
+
+##Example
+--
+
+```python
+class Ball:
+    def __init__(self):
+        self.accel = Vector(0,0)
+
+    def applyForce(self, force):
+        self.accel.x += force.x / self.mass; 
+        self.accel.y += force.y / self.mass; 
+
+    def updatePosition(self):
+        self.velocity.x += self.accel.x;
+        self.position.x += self.velocity.x;
+        self.velocity.y += self.accel.y;
+        self.position.y += self.velocity.y;
+```
+--
+
+Now any type of ball can have a force applied to it just by *inheriting* from the *base class*
+
+---
+
+## Object Orientation
+
+Lets see how this works in our image editing example
+
+--
+
+```python
+class Tool:
+    def use(image, x, y):
+        print "This is only a base class I do nothing"
+```
+
+---
+
+## Object Orientation
+
+### Paint Brush
+
+```python
+class PaintBrush(Tool):
+    def __init__(self, color, width):
+        self.color = color
+        self.width = width
+
+    def use(self, image, x, y):
+        for row in range(y - self.width, y):
+            if(row < 0):
+                next
+            for col in range(x - self.width, x):
+                if(col < 0):
+                    next
+                image[row][col] = self.color
+```
+---
+
+## Object Orientation
+
+### Paint Bucket
+
+```python
+class PaintBucket(Tool):
+    def __init__(self, color):
+        self.color = color;
+
+    def use(self, image, x, y):
+        for row in range(len(image)):
+            for col in range(len(image[row])):
+                image[row][col] = self.color 
+```
+
+---
+
+## Tying it together
+
+--
+
+You can imagine we have a `Pallet` class somewhere with the current state of the user interface
+
+--
+
+```python
+class Pallet:
+    def __init__(self):
+        self.selectedTool = None
+        self.toolHistory = []
+        self.image = None
+
+    def selectTool(tool):
+        self.selectedTool = tool
+        self.toolHistory.push(tool)
+
+    def useTool(x, y):
+        self.selectedTool.use(self.image, x, y)
+
+    def usePreviousTool(tool):
+        self.selectTool(toolHistory.pop());
+
+    def selectImage(self, image):
+        self.image = image
+```
+---
+
+## Tying it together
+
+Now we have the ability to use lots of different tools without knowing or caring about what *exactly* they do.
+
+--
+
+```python
+# ... somewhere above here we load the image and call it "image"
+whiteBrush = PaintBrush(Color(0, 0, 0), 2)
+blueBucket = PaintBucket(Color(0, 0, 255))
+pallet = Pallet()
+pallet.selectImage(image)
+pallet.selectTool(blueBucket)
+pallet.useTool(0, 0)
+pallet.selectTool(whiteBrush)
+pallet.useTool(5, 5)
+```
+
+--
+
+You can see that this should fill an image completely with blue pixels and then draw a 2x2 white square at coordinate (5,5)
+
+---
+
+# Now for something completely different
+.maze[![Maze](http://i.imgur.com/YjfzxXY.gif)]
+
+
+</markdown>
+        </textarea>
+        <script src="http://gnab.github.io/remark/downloads/remark-latest.min.js" type="text/javascript">
+        </script>
+        <script type="text/javascript">
+            var slideshow = remark.create();
+        </script>
+    </body>
+</html>
+
