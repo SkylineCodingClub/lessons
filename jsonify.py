@@ -4,7 +4,7 @@ import sys
 import json
 import re
 
-prefix = "sklinecodingclub.github.io/lessons/"
+prefix = "http://sklinecodingclub.github.io/lessons/"
 
 def find_slide_title(html):
     with open(html, "r") as fh:
