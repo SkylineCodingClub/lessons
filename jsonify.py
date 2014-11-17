@@ -11,15 +11,19 @@ def find_slide_title(html):
             if(title_search):
                 return title_search.group(1) 
 
-file_data = []
+lesson_string = "<!-- Lesson list -->\n"
 for html in sys.argv[1:]:
     title = find_slide_title(html)
-    file_data.append({
-        'link': html,
-        'title': title
-    })
+    lesson_string += "[{0}]({1})\n".format(title, html)
+lesson_string += "<! -- End lesson list -->\n"
 
-print json.dumps({
-    "lessons": file_data
-})
+readme_data = ""
+with open("README.md", "r") as fh:
+    readme_data = fh.read()
+    readme_data = re.sub(r'<!-- Lesson list -->.*<!-- End lesson list -->', 
+                         lesson_string, readme_data, flags=re.DOTALL)
+fh.close();
 
+with open("README.md", "w") as fh:
+    fh.write(readme_data)
+fh.close();
