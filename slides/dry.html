@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Title</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <style type="text/css">
+        @import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+        @import url(http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+
+        body { font-family: 'Droid Serif'; }
+        h1, h2, h3 {
+            font-family: 'Yanone Kaffeesatz';
+            font-weight: normal;
+        }
+        .remark-code {
+            overflow: auto;
+            max-height: 550px;
+            width: 100%;
+            position: relative;
+            font-size: 16px;
+        }
+        .remark-inline-code {
+            background-color: rgba(51,51,51, 0.07);
+        }
+        .tool  img {
+            position: relative;
+            display: inline-block;
+            width: 10%;
+            height: 10%;
+        }
+        .maze img {
+            position: relative;
+            height: 70%;
+            width: 70%;
+            margin: auto auto;
+            left: 12%;
+        }
+        </style>
+    </head>
+    <body>
+        <textarea id="source">
+
+class: center, middle
+<markdown>
+
+# Software Principals I
+## Don't Repeat Yourself
+---
+
+# Problem
+
+You need to create a program that does the same thing in multiple places
+
+--
+
+There are two main solutions to this
+
+--
+
+- Copy the code
+- Encapsulate the code 
+
+--
+
+Example:
+```python
+class person:
+    def __init__(self, name):
+        self.name = name
+    
+    def say_name(self):
+        print "Hi I'm {0}".format(self.name.title())
+
+    def greet(self, target):
+        print "Hey {0}, it's nice to mee you I'm {1}".format(
+            target.name.title(), self.name.title())
+```
+--
+
+What's wrong with this?
+
+--
+
+Notice all the calls to ".title()" every time we need a peron's name?
+
+---
+
+## What's the big deal?
+
+--
+
+We made a couple of redundant calls. In the grand scheme of things it's just a
+little extra typing...
+
+--
+
+Repeating code in this way presents issues with
+
+--
+
+- Flexibility
+
+--
+
+- Testability
+
+---
+
+## What's the big deal? (Flexibility)
+
+--
+
+You've just decided to give the option for each "person" object to have
+a title (like Mr., Mrs. or Dr.)...
+
+--
+
+Now you have to find everywhere in your code that references `self.name`
+and make sure that you prefix it with a title
+
+--
+
+`self.name` becomes `"{0} {1}".format(self.title, self.name)` and that's if
+you don't want to make sure it's properly title cased!
+
+--
+
+```python
+class person:
+    def __init__(self, name, title=""):
+        self.name = name
+        self.title = title
+    
+    def say_name(self):
+        print "Hi I'm {0}".format(self.name.title + self.name.title())
+
+    def greet(self, target):
+        print "Hey {0}, it's nice to mee you I'm {1}".format(
+            target.name.title + target.name.title(), 
+            self.name.title + self.name.title())
+```
+
+--
+
+This quickly becomes a pain if you need to change things about `self.name`
+
+???
+
+The more unsure you are about how things will evolve the more abstract you
+should make a concept. If it's "pretty certain" don't waste your time. 
+Abstraction isn't done for its own sake except in math.
+
+---
+
+## What's the big deal? (Testability)
+
+--
+
+When working with a test-drive-design we want to verify our code conforms to
+a certain set of behaviors
+
+???
+
+I haven't talked too much about test driven design but it suffices to say that
+it is centered around writing tests to verify that your code behaves the way that
+you expect it to
+
+???
+
+--
+
+But now the behavior is duplicated
+
+???
+
+The code to add the title to the front of the name is 2 seperate
+
+???
+
+--
+
+So there will need to be two similar tests checking for the same behavior
+
+---
+
+The important thing to nice here is the duplication of checks for the addition
+of the "Mr" prefix and the correct capitalization behavior
+
+```python
+test_out = StringIO()
+sys.stdout = test_out
+
+def test_person_say_name():
+    test_person = person("tom")
+
+    test_person.say_name()
+    output = test_out.getvalue().strip()
+
+    # check for default no title and proper casing
+    assert output == "Hi I'm Tom"
+
+    test_person.title = "Mr."
+    test_person.say_name()
+    output = test_out.getvalue().strip()
+
+    # check for adding title to output
+    assert output == "Hi I'm Mr. Tom"
+
+def test_person_greet():
+    test_person = person("tom")
+    test_person2 = person("steve")
+
+    # check for default no title and proper casing
+    test_person.greet(test_person2)
+
+    output = test_out.getvalue().strip()
+
+    assert output == "Hey Steve it's nice to meet you I'm Tom"
+
+    # check for adding title to output
+    test_person.title = "Mr"
+
+    test_person.greet()
+    output = test_out.getvalue().strip()
+
+    test_person.title = "Mr."
+    assert output == "Hey Steve it's nice to meet you I'm Mr. Tom"
+```
+
+---
+
+## What's the big deal? (Testability)
+
+--
+
+With many tests this will quickly get out of hand
+
+--
+
+Oh no! We forgot about making sure `person.title` is always capitalized.
+Better go change that... everywhere
+
+--
+
+Hopefully I've convinced you that duplicaiton of code, when it can be avoided,
+often should be
+
+---
+
+## What's the solution? (Flexibility)
+
+(D)on't (R)epeat (Y)ourself
+
+???
+
+The hany acronym "dry" is highlighted here for you
+
+???
+
+--
+
+The solution here is very simple because it's a simple example
+
+--
+
+```python
+class person:
+    def __init__(self, name):
+        self.name = name
+
+    def get_name(self):
+        return "{0} {1}".format(self.title.title(), self.name.title())
+    
+    def say_name(self):
+        print "Hi I'm {0}".format(self.get_name())
+
+    def greet(self, target):
+        print "Hey {0}, it's nice to mee you I'm {1}".format(
+            target.get_name(), self.get_name())
+```
+
+--
+
+See how I snuck in that little mistake we realized above?
+
+--
+
+I added proper captilization of `person.title` and it was an 8 character fix!
+
+---
+
+## What's the solution? (Testability)
+
+We now write one set of tests to make sure get name is functioning properly and
+that's all!
+
+--
+
+```python
+def test_person_get_name():
+    test_person = person("tom")
+
+    # check for proper captilization
+    assert test_person.get_name() == "Hi I'm Tom"
+
+    # check for proper title
+    test_person.title = "mr."
+    assert test_person.get_name() == "Hi I'm Mr. Tom"
+```
+
+---
+
+## Caveats
+
+--
+
+DRY can drive you crazy
+
+--
+
+You won't get rid of all the repetition forever
+
+--
+
+If you designed your system poorly you may have no choice but to repeat
+yourself
+
+--
+
+Don't do a full overhaul if you paint yourlself into a corner
+just learn from your mistakes
+
+???
+
+Right now when you're learning how to properly abstract code and refactor
+things lean on the side of doing it. It's good practice if nothing else.
+
+???
+
+--
+
+Remember the program that runs is always better than the perfectly designed one
+that was never finished
+
+</markdown>
+        </textarea>
+        <script src="http://gnab.github.io/remark/downloads/remark-latest.min.js" type="text/javascript">
+        </script>
+        <script type="text/javascript">
+            var slideshow = remark.create();
+        </script>
+    </body>
+</html>
+

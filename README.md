@@ -5,6 +5,7 @@ HTML slide shows of the coding club lessons!
 
 
 <!-- Lesson list -->
+[Software Principals I](http://skylinecodingclub.github.io/lessons/slides/dry.html)  
 [Model View Controller Design](http://skylinecodingclub.github.io/lessons/slides/mvc.html)  
 [Objected Oriented Programming](http://skylinecodingclub.github.io/lessons/slides/object_oriented.html)  
 [Pygame Intro](http://skylinecodingclub.github.io/lessons/slides/pygame_intro.html)  
